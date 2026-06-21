@@ -35,7 +35,7 @@
     <div class="eyebrow">Native web stack</div>
     <h1>Svelte meets Python</h1>
     <p class="intro">
-      This page is rendered by Svelte. The greeting below comes from a FastAPI endpoint.
+      This page is rendered by Svelte. The greeting below comes from a Litestar endpoint.
     </p>
 
     <form on:submit|preventDefault={sayHello}>
@@ -55,9 +55,8 @@
     <div class="stack">
       <span>Svelte</span>
       <span>Vite</span>
-      <span>FastAPI</span>
+      <span>Litestar</span>
       <span>Python</span>
     </div>
   </section>
 </main>
-

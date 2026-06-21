@@ -3,7 +3,7 @@
 A minimal web application with:
 
 - Svelte and Vite for the browser UI
-- FastAPI and Uvicorn for the Python API
+- Litestar and Uvicorn for the Python API
 - No database, Docker, WSL, or virtual machine required
 
 ## Quick Windows Server test
@@ -81,7 +81,7 @@ Then start Python:
 uvicorn app.main:app --host 0.0.0.0 --port 9090
 ```
 
-Open <http://localhost:9090>. FastAPI serves both the API and the compiled Svelte frontend.
+Open <http://localhost:9090>. Litestar serves both the API and the compiled Svelte frontend.
 
 ## Endpoints
 
