@@ -1,6 +1,6 @@
 param(
     [ValidateRange(1, 65535)]
-    [int]$Port = 8000
+    [int]$Port = 9090
 )
 
 $ErrorActionPreference = "Stop"
@@ -28,4 +28,3 @@ try {
 finally {
     Pop-Location
 }
-
