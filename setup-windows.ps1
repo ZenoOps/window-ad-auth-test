@@ -5,11 +5,11 @@ $Frontend = Join-Path $Root "frontend"
 $Backend = Join-Path $Root "backend"
 $Python = Join-Path $Backend ".venv\Scripts\python.exe"
 
-if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
-    throw "WinGet is required to install Node.js and Python automatically."
-}
-
 if (-not (Get-Command node -ErrorAction SilentlyContinue)) {
+    if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
+        throw "Node.js is missing and WinGet is unavailable. Install Node.js LTS manually."
+    }
+
     Write-Host "Installing Node.js LTS..." -ForegroundColor Cyan
 
     winget install `
@@ -28,6 +28,10 @@ if (-not (Get-Command npm -ErrorAction SilentlyContinue)) {
 }
 
 if (-not (Get-Command py -ErrorAction SilentlyContinue)) {
+    if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
+        throw "Python is missing and WinGet is unavailable. Install Python 3 manually."
+    }
+
     Write-Host "Installing Python 3.13..." -ForegroundColor Cyan
 
     winget install `
@@ -41,3 +45,23 @@ if (-not (Get-Command py -ErrorAction SilentlyContinue)) {
     exit
 }
 
+Write-Host "Installing and building the Svelte frontend..." -ForegroundColor Cyan
+Push-Location $Frontend
+try {
+    npm install
+    npm run build
+}
+finally {
+    Pop-Location
+}
+
+Write-Host "Creating the Python environment..." -ForegroundColor Cyan
+if (-not (Test-Path $Python)) {
+    & py -3 -m venv (Join-Path $Backend ".venv")
+}
+
+& $Python -m pip install -r (Join-Path $Backend "requirements.txt")
+
+Write-Host "Setup complete." -ForegroundColor Green
+Write-Host "Run manually with: .\run-windows.ps1 or use WindowSW to install as a service with: .\install-windows-service.ps1" -ForegroundColor Yellow
+Write-Host "Install as a service with Administrator PowerShell: .\install-windows-service.ps1"
