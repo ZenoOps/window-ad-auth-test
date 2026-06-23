@@ -27,6 +27,47 @@ New-NetFirewallRule -DisplayName "Svelte Python Test" -Direction Inbound -Action
 
 The setup script compiles Svelte and installs the Python packages. The run script starts one Python process that serves both the frontend and API.
 
+## Install as a Windows service
+
+Run `setup-windows.ps1` first and confirm that the application works manually. Then close the manually running application and open PowerShell **as Administrator** in the application directory.
+
+Install and start the service:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\install-windows-service.ps1
+```
+
+The installer downloads the stable WinSW service wrapper, registers `SvelteLitestarApp`, and starts it automatically. The service uses port `9090`, starts after Windows boots, and restarts after an unexpected failure.
+
+Useful service commands:
+
+```powershell
+Get-Service SvelteLitestarApp
+Restart-Service SvelteLitestarApp
+Stop-Service SvelteLitestarApp
+Start-Service SvelteLitestarApp
+```
+
+Service output and error logs are written under `service\logs`. To follow the application output:
+
+```powershell
+Get-Content .\service\logs\SvelteLitestarService.out.log -Wait
+```
+
+To remove the Windows service without deleting the application:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\uninstall-windows-service.ps1
+```
+
+After changing application code or dependencies, rebuild and restart it:
+
+```powershell
+Stop-Service SvelteLitestarApp
+powershell -ExecutionPolicy Bypass -File .\setup-windows.ps1
+Start-Service SvelteLitestarApp
+```
+
 ## Development
 
 ### Start the Python API

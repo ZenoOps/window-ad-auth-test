@@ -1,0 +1,20 @@
+<service>
+  <id>SvelteLitestarApp</id>
+  <name>Svelte Litestar Application</name>
+  <description>Hosts the Svelte frontend and Litestar API on port 9090.</description>
+
+  <executable>%BASE%\..\backend\.venv\Scripts\python.exe</executable>
+  <arguments>-m uvicorn app.main:app --host 0.0.0.0 --port 9090</arguments>
+  <workingdirectory>%BASE%\..\backend</workingdirectory>
+  <env name="PYTHONDONTWRITEBYTECODE" value="1" />
+
+  <startmode>Automatic</startmode>
+  <delayedAutoStart>true</delayedAutoStart>
+  <onfailure action="restart" delay="10 sec" />
+  <resetfailure>1 hour</resetfailure>
+  <stoptimeout>20 sec</stoptimeout>
+  <stopparentprocessfirst>true</stopparentprocessfirst>
+
+  <logpath>%BASE%\logs</logpath>
+  <log mode="roll"></log>
+</service>
