@@ -4,6 +4,8 @@ $Root = Split-Path -Parent $MyInvocation.MyCommand.Path
 $Frontend = Join-Path $Root "frontend"
 $Backend = Join-Path $Root "backend"
 $Python = Join-Path $Backend ".venv\Scripts\python.exe"
+$BackendEnv = Join-Path $Backend ".env"
+$BackendEnvExample = Join-Path $Backend ".env.example"
 
 if (-not (Get-Command node -ErrorAction SilentlyContinue)) {
     if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
@@ -62,6 +64,32 @@ if (-not (Test-Path $Python)) {
 
 & $Python -m pip install -r (Join-Path $Backend "requirements.txt")
 
+if (-not (Test-Path $BackendEnv)) {
+    Copy-Item $BackendEnvExample $BackendEnv
+    Write-Host "Created backend\.env. Configure the Casdoor application values before using authentication." `
+        -ForegroundColor Yellow
+}
+else {
+    $RequiredSettings = @(
+        "CASDOOR_APPLICATION",
+        "CASDOOR_CLIENT_ID",
+        "CASDOOR_CLIENT_SECRET",
+        "CASDOOR_REDIRECT_URI"
+    )
+    $EnvironmentText = Get-Content $BackendEnv -Raw
+    $MissingSettings = @(
+        $RequiredSettings | Where-Object {
+            $EnvironmentText -notmatch "(?m)^$($_)\s*=\s*\S+"
+        }
+    )
+
+    if ($MissingSettings.Count -gt 0) {
+        Write-Host "backend\.env needs these authentication settings: $($MissingSettings -join ', ')" `
+            -ForegroundColor Yellow
+    }
+}
+
 Write-Host "Setup complete." -ForegroundColor Green
 Write-Host "Run manually with: .\run-windows.ps1 or use WindowSW to install as a service with: .\install-windows-service.ps1" -ForegroundColor Yellow
 Write-Host "Install as a service with Administrator PowerShell: .\install-windows-service.ps1"
+Write-Host "Create a fallback account with: & .\backend\.venv\Scripts\python.exe .\backend\create_local_user.py"

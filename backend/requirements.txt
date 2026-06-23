@@ -1,2 +1,6 @@
 litestar>=2.0,<3.0
+argon2-cffi>=25.1,<26.0
+httpx>=0.28,<1.0
+PyJWT[crypto]>=2.10,<3.0
+python-dotenv>=1.1,<2.0
 uvicorn>=0.34,<1.0
